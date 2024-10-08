@@ -4,6 +4,8 @@ Start the node
 
 ```bash
 $ reth node --help
+```
+```txt
 Usage: reth node [OPTIONS]
 
 Options:
@@ -56,7 +58,7 @@ Datadir:
 
           [default: default]
 
-      --datadir.static_files <PATH>
+      --datadir.static-files <PATH>
           The absolute path to store static files in.
 
 Networking:
@@ -91,12 +93,12 @@ Networking:
       --discovery.v5.port <DISCOVERY_V5_PORT>
           The UDP IPv4 port to use for devp2p peer discovery version 5. Not used unless `--addr` is IPv4, or `--discovery.v5.addr` is set
 
-          [default: 9000]
+          [default: 9200]
 
       --discovery.v5.port.ipv6 <DISCOVERY_V5_PORT_IPV6>
           The UDP IPv6 port to use for devp2p peer discovery version 5. Not used unless `--addr` is IPv6, or `--discovery.addr.ipv6` is set
 
-          [default: 9000]
+          [default: 9200]
 
       --discovery.v5.lookup-interval <DISCOVERY_V5_LOOKUP_INTERVAL>
           The interval in seconds at which to carry out periodic lookup queries, for the whole run of the program
@@ -169,12 +171,27 @@ Networking:
       --max-inbound-peers <MAX_INBOUND_PEERS>
           Maximum number of inbound requests. default: 30
 
-      --max-seen-tx-history <MAX_SEEN_TX_HISTORY>
+      --max-tx-reqs <COUNT>
+          Max concurrent `GetPooledTransactions` requests.
+
+          [default: 130]
+
+      --max-tx-reqs-peer <COUNT>
+          Max concurrent `GetPooledTransactions` requests per peer.
+
+          [default: 1]
+
+      --max-seen-tx-history <COUNT>
           Max number of seen transactions to remember per peer.
 
           Default is 320 transaction hashes.
 
           [default: 320]
+
+      --max-pending-imports <COUNT>
+          Max number of transactions to import concurrently.
+
+          [default: 4096]
 
       --pooled-tx-response-soft-limit <BYTES>
           Experimental, for usage in research. Sets the max accumulated byte size of transactions
@@ -198,6 +215,16 @@ Networking:
 
           [default: 131072]
 
+      --max-tx-pending-fetch <COUNT>
+          Max capacity of cache of hashes for transactions pending fetch.
+
+          [default: 25600]
+
+      --net-if.experimental <IF_NAME>
+          Name of network interface used to communicate with peers.
+
+          If flag is set, but no value is passed, the default interface for docker `eth0` is tried.
+
 RPC:
       --http
           Enable the HTTP-RPC server
@@ -215,7 +242,7 @@ RPC:
       --http.api <HTTP_API>
           Rpc Modules to be configured for the HTTP server
 
-          [possible values: admin, debug, eth, net, trace, txpool, web3, rpc, reth, ots, eth-call-bundle]
+          [possible values: admin, debug, eth, net, trace, txpool, web3, rpc, reth, ots]
 
       --http.corsdomain <HTTP_CORSDOMAIN>
           Http Corsdomain to allow request from
@@ -239,7 +266,7 @@ RPC:
       --ws.api <WS_API>
           Rpc Modules to be configured for the WS server
 
-          [possible values: admin, debug, eth, net, trace, txpool, web3, rpc, reth, ots, eth-call-bundle]
+          [possible values: admin, debug, eth, net, trace, txpool, web3, rpc, reth, ots]
 
       --ipcdisable
           Disable the IPC-RPC server
@@ -319,6 +346,11 @@ RPC:
           Maximum gas limit for `eth_call` and call tracing RPC methods
 
           [default: 50000000]
+
+      --rpc.max-simulate-blocks <BLOCKS_COUNT>
+          Maximum number of blocks for `eth_simulateV1` call
+
+          [default: 256]
 
       --rpc.eth-proof-window <RPC_ETH_PROOF_WINDOW>
           The maximum proof window for historical proof generation. This value allows for generating historical proofs up to configured number of blocks from current tip (up to `tip - window`)
@@ -412,6 +444,16 @@ TxPool:
           Price bump (in %) for the transaction pool underpriced check
 
           [default: 10]
+
+      --txpool.minimal-protocol-fee <MINIMAL_PROTOCOL_BASEFEE>
+          Minimum base fee required by the protocol
+
+          [default: 7]
+
+      --txpool.gas-limit <GAS_LIMIT>
+          The default enforced gas limit for transactions entering the pool
+
+          [default: 30000000]
 
       --blobpool.pricebump <BLOB_TRANSACTION_PRICE_BUMP>
           Price bump percentage to replace an already existing blob transaction
@@ -507,8 +549,22 @@ Debug:
       --debug.reorg-frequency <REORG_FREQUENCY>
           If provided, the chain will be reorged at specified frequency
 
+      --debug.reorg-depth <REORG_DEPTH>
+          The reorg depth for chain reorgs
+
       --debug.engine-api-store <PATH>
           The path to store engine API messages at. If specified, all of the intercepted engine API messages will be written to specified location
+
+      --debug.invalid-block-hook <INVALID_BLOCK_HOOK>
+          Determines which type of invalid block hook to install
+
+          Example: `witness,prestate`
+
+          [default: witness]
+          [possible values: witness, pre-state, opcode]
+
+      --debug.healthy-node-rpc-url <URL>
+          The RPC URL of a healthy node to use for comparing invalid block hook results against.
 
 Database:
       --db.log-level <LOG_LEVEL>
@@ -550,11 +606,74 @@ Dev testnet:
 
 Pruning:
       --full
-          Run full node. Only the most recent [`MINIMUM_PRUNING_DISTANCE`] block states are stored. This flag takes priority over pruning configuration in reth.toml
+          Run full node. Only the most recent [`MINIMUM_PRUNING_DISTANCE`] block states are stored
+
+      --block-interval <BLOCK_INTERVAL>
+          Minimum pruning interval measured in blocks
+
+          [default: 0]
+
+      --prune.senderrecovery.full
+          Prunes all sender recovery data
+
+      --prune.senderrecovery.distance <BLOCKS>
+          Prune sender recovery data before the `head-N` block number. In other words, keep last N + 1 blocks
+
+      --prune.senderrecovery.before <BLOCK_NUMBER>
+          Prune sender recovery data before the specified block number. The specified block number is not pruned
+
+      --prune.transactionlookup.full
+          Prunes all transaction lookup data
+
+      --prune.transactionlookup.distance <BLOCKS>
+          Prune transaction lookup data before the `head-N` block number. In other words, keep last N + 1 blocks
+
+      --prune.transactionlookup.before <BLOCK_NUMBER>
+          Prune transaction lookup data before the specified block number. The specified block number is not pruned
+
+      --prune.receipts.full
+          Prunes all receipt data
+
+      --prune.receipts.distance <BLOCKS>
+          Prune receipts before the `head-N` block number. In other words, keep last N + 1 blocks
+
+      --prune.receipts.before <BLOCK_NUMBER>
+          Prune receipts before the specified block number. The specified block number is not pruned
+
+      --prune.accounthistory.full
+          Prunes all account history
+
+      --prune.accounthistory.distance <BLOCKS>
+          Prune account before the `head-N` block number. In other words, keep last N + 1 blocks
+
+      --prune.accounthistory.before <BLOCK_NUMBER>
+          Prune account history before the specified block number. The specified block number is not pruned
+
+      --prune.storagehistory.full
+          Prunes all storage history data
+
+      --prune.storagehistory.distance <BLOCKS>
+          Prune storage history before the `head-N` block number. In other words, keep last N + 1 blocks
+
+      --prune.storagehistory.before <BLOCK_NUMBER>
+          Prune storage history before the specified block number. The specified block number is not pruned
+
+      --prune.receiptslogfilter <FILTER_CONFIG>
+          Configure receipts log filter. Format: <`address`>:<`prune_mode`>[,<`address`>:<`prune_mode`>...] Where <`prune_mode`> can be 'full', 'distance:<`blocks`>', or 'before:<`block_number`>'
 
 Engine:
       --engine.experimental
           Enable the engine2 experimental features on reth binary
+
+      --engine.persistence-threshold <PERSISTENCE_THRESHOLD>
+          Configure persistence threshold for engine experimental
+
+          [default: 2]
+
+      --engine.memory-block-buffer-target <MEMORY_BLOCK_BUFFER_TARGET>
+          Configure the target number of blocks to keep in memory
+
+          [default: 2]
 
 Logging:
       --log.stdout.format <FORMAT>

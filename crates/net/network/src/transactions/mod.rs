@@ -31,6 +31,7 @@ use std::{
     time::{Duration, Instant},
 };
 
+use alloy_primitives::{TxHash, B256};
 use futures::{stream::FuturesUnordered, Future, StreamExt};
 use reth_eth_wire::{
     DedupPayload, EthVersion, GetPooledTransactions, HandleMempoolData, HandleVersionedMempoolData,
@@ -47,7 +48,7 @@ use reth_network_p2p::{
 };
 use reth_network_peers::PeerId;
 use reth_network_types::ReputationChangeKind;
-use reth_primitives::{PooledTransactionsElement, TransactionSigned, TxHash, B256};
+use reth_primitives::{PooledTransactionsElement, TransactionSigned, TransactionSignedEcRecovered};
 use reth_tokio_util::EventStream;
 use reth_transaction_pool::{
     error::{PoolError, PoolResult},
@@ -1022,13 +1023,7 @@ where
                         entry.get_mut().insert(peer_id);
                     }
                     Entry::Vacant(entry) => {
-                        if !self.bad_imports.contains(tx.hash()) {
-                            // this is a new transaction that should be imported into the pool
-                            let pool_transaction = Pool::Transaction::from_pooled(tx);
-                            new_txs.push(pool_transaction);
-
-                            entry.insert(HashSet::from([peer_id]));
-                        } else {
+                        if self.bad_imports.contains(tx.hash()) {
                             trace!(target: "net::tx",
                                 peer_id=format!("{peer_id:#}"),
                                 hash=%tx.hash(),
@@ -1036,6 +1031,12 @@ where
                                 "received a known bad transaction from peer"
                             );
                             has_bad_transactions = true;
+                        } else {
+                            // this is a new transaction that should be imported into the pool
+                            let pool_transaction = Pool::Transaction::from_pooled(tx.into());
+                            new_txs.push(pool_transaction);
+
+                            entry.insert(HashSet::from([peer_id]));
                         }
                     }
                 }
@@ -1395,9 +1396,14 @@ impl PropagateTransaction {
     }
 
     /// Create a new instance from a pooled transaction
-    fn new<T: PoolTransaction>(tx: Arc<ValidPoolTransaction<T>>) -> Self {
+    fn new<T>(tx: Arc<ValidPoolTransaction<T>>) -> Self
+    where
+        T: PoolTransaction<Consensus: Into<TransactionSignedEcRecovered>>,
+    {
         let size = tx.encoded_length();
-        let transaction = Arc::new(tx.transaction.clone().into().into_signed());
+        let recovered: TransactionSignedEcRecovered =
+            tx.transaction.clone().into_consensus().into();
+        let transaction = Arc::new(recovered.into_signed());
         Self { size, transaction }
     }
 }
@@ -1734,6 +1740,7 @@ struct TxManagerPollDurations {
 mod tests {
     use super::*;
     use crate::{test_utils::Testnet, NetworkConfigBuilder, NetworkManager};
+    use alloy_primitives::hex;
     use alloy_rlp::Decodable;
     use constants::tx_fetcher::DEFAULT_MAX_COUNT_FALLBACK_PEERS;
     use futures::FutureExt;
@@ -1742,7 +1749,6 @@ mod tests {
         error::{RequestError, RequestResult},
         sync::{NetworkSyncUpdater, SyncState},
     };
-    use reth_primitives::hex;
     use reth_provider::test_utils::NoopProvider;
     use reth_transaction_pool::test_utils::{
         testing_pool, MockTransaction, MockTransactionFactory, TestPool,

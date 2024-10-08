@@ -2,63 +2,12 @@
 //!
 //! Log parsing for building filter.
 
+use alloy_primitives::TxHash;
+use alloy_rpc_types::{FilteredParams, Log};
 use reth_chainspec::ChainInfo;
 use reth_errors::ProviderError;
-use reth_primitives::{BlockNumHash, Receipt, TxHash};
-use reth_rpc_server_types::result::rpc_error_with_code;
-use reth_rpc_types::{FilterId, FilteredParams, Log};
+use reth_primitives::{BlockNumHash, Receipt};
 use reth_storage_api::BlockReader;
-
-use crate::EthApiError;
-
-/// Errors that can occur in the handler implementation
-#[derive(Debug, thiserror::Error)]
-pub enum EthFilterError {
-    /// Filter not found.
-    #[error("filter not found")]
-    FilterNotFound(FilterId),
-    /// Invalid block range.
-    #[error("invalid block range params")]
-    InvalidBlockRangeParams,
-    /// Query scope is too broad.
-    #[error("query exceeds max block range {0}")]
-    QueryExceedsMaxBlocks(u64),
-    /// Query result is too large.
-    #[error("query exceeds max results {0}")]
-    QueryExceedsMaxResults(usize),
-    /// Error serving request in `eth_` namespace.
-    #[error(transparent)]
-    EthAPIError(#[from] EthApiError),
-    /// Error thrown when a spawned task failed to deliver a response.
-    #[error("internal filter error")]
-    InternalError,
-}
-
-// convert the error
-impl From<EthFilterError> for jsonrpsee_types::error::ErrorObject<'static> {
-    fn from(err: EthFilterError) -> Self {
-        match err {
-            EthFilterError::FilterNotFound(_) => {
-                rpc_error_with_code(jsonrpsee_types::error::INVALID_PARAMS_CODE, "filter not found")
-            }
-            err @ EthFilterError::InternalError => {
-                rpc_error_with_code(jsonrpsee_types::error::INTERNAL_ERROR_CODE, err.to_string())
-            }
-            EthFilterError::EthAPIError(err) => err.into(),
-            err @ EthFilterError::InvalidBlockRangeParams |
-            err @ EthFilterError::QueryExceedsMaxBlocks(_) |
-            err @ EthFilterError::QueryExceedsMaxResults(_) => {
-                rpc_error_with_code(jsonrpsee_types::error::INVALID_PARAMS_CODE, err.to_string())
-            }
-        }
-    }
-}
-
-impl From<ProviderError> for EthFilterError {
-    fn from(err: ProviderError) -> Self {
-        Self::EthAPIError(err.into())
-    }
-}
 
 /// Returns all matching of a block's receipts when the transaction hashes are known.
 pub fn matching_block_logs_with_tx_hashes<'a, I>(
@@ -106,7 +55,7 @@ pub fn append_matching_block_logs(
     receipts: &[Receipt],
     removed: bool,
     block_timestamp: u64,
-) -> Result<(), EthFilterError> {
+) -> Result<(), ProviderError> {
     // Tracks the index of a log in the entire block.
     let mut log_index: u64 = 0;
 
@@ -140,7 +89,7 @@ pub fn append_matching_block_logs(
                     let transaction_id = first_tx_num + receipt_idx as u64;
                     let transaction = provider
                         .transaction_by_id(transaction_id)?
-                        .ok_or(ProviderError::TransactionNotFound(transaction_id.into()))?;
+                        .ok_or_else(|| ProviderError::TransactionNotFound(transaction_id.into()))?;
 
                     transaction_hash = Some(transaction.hash());
                 }
@@ -167,7 +116,7 @@ pub fn append_matching_block_logs(
 /// Returns true if the log matches the filter and should be included
 pub fn log_matches_filter(
     block: BlockNumHash,
-    log: &reth_primitives::Log,
+    log: &alloy_primitives::Log,
     params: &FilteredParams,
 ) -> bool {
     if params.filter.is_some() &&
@@ -209,7 +158,7 @@ pub fn get_filter_block_range(
 
 #[cfg(test)]
 mod tests {
-    use reth_rpc_types::Filter;
+    use alloy_rpc_types::Filter;
 
     use super::*;
 
@@ -272,8 +221,8 @@ mod tests {
         let start_block = info.best_number;
 
         let (from_block_number, to_block_number) = get_filter_block_range(
-            from_block.and_then(reth_rpc_types::BlockNumberOrTag::as_number),
-            to_block.and_then(reth_rpc_types::BlockNumberOrTag::as_number),
+            from_block.and_then(alloy_rpc_types::BlockNumberOrTag::as_number),
+            to_block.and_then(alloy_rpc_types::BlockNumberOrTag::as_number),
             start_block,
             info,
         );
