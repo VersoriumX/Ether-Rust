@@ -1,14 +1,14 @@
 [book]
-authors = ["reth Core Contributors"]
+authors = ["Ether-Rust Core Contributors"]
 language = "en"
 multilingual = false
 src = "book"
-title = "reth Book"
-description = "A book on all things Reth"
+title = "Ether-Rust Book"
+description = "A book on all things Ethereum-Rust"
 
 [output.html]
 theme = "book/theme"
-git-repository-url = "https://github.com/paradigmxyz/reth"
+git-repository-url = "https://github.com/VersoriumX-Technology/Ether-Rust"
 default-theme = "ayu"
 no-section-label = true
 
