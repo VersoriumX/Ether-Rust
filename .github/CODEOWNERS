@@ -1,48 +1,48 @@
-*                           @gakonst
-bin/                        @onbjerg
-crates/blockchain-tree/     @rakita @rkrasiuk @mattsse @Rjected
-crates/blockchain-tree-api/ @rakita @rkrasiuk @mattsse @Rjected
-crates/chainspec/           @Rjected @joshieDo @mattsse @emhane
-crates/chain-state/         @fgimenez @mattsse @rkrasiuk
-crates/cli/                 @onbjerg @mattsse
-crates/config/              @onbjerg
-crates/consensus/           @rkrasiuk @mattsse @Rjected
-crates/engine               @rkrasiuk @mattsse @Rjected
-crates/e2e-test-utils/      @mattsse @Rjected
-crates/engine/              @rkrasiuk @mattsse @Rjected @fgimenez
-crates/errors/              @mattsse
-crates/ethereum/            @mattsse @Rjected
-crates/ethereum-forks/      @mattsse @Rjected
-crates/etl/                 @joshieDo @shekhirin
-crates/evm/                 @rakita @mattsse @Rjected
-crates/exex/                @onbjerg @shekhirin
-crates/fs-util/             @onbjerg @emhane
-crates/metrics/             @onbjerg
-crates/net/                 @emhane @mattsse @Rjected
-crates/net/downloaders/     @onbjerg @rkrasiuk @emhane
-crates/node/                @mattsse @Rjected @onbjerg
-crates/optimism/            @mattsse @Rjected @fgimenez @emhane
-crates/payload/             @mattsse @Rjected
-crates/primitives/          @Rjected
-crates/primitives-traits/   @Rjected @joshieDo
-crates/prune/               @shekhirin @joshieDo
-crates/revm/                @mattsse @rakita
-crates/rpc/                 @mattsse @Rjected @emhane
-crates/stages/              @onbjerg @rkrasiuk @shekhirin
-crates/static-file/         @joshieDo @shekhirin
-crates/storage/codecs/      @joshieDo
-crates/storage/db/          @joshieDo @rakita
-crates/storage/db-api/      @joshieDo @rakita
-crates/storage/db-common/   @Rjected @onbjerg
-crates/storage/errors/      @rakita @onbjerg
-crates/storage/libmdbx-rs/  @rakita @shekhirin
-crates/storage/nippy-jar/   @joshieDo @shekhirin
-crates/storage/provider/    @rakita @joshieDo @shekhirin
-crates/storage/storage-api/ @joshieDo @rkrasiuk
-crates/tasks/               @mattsse
-crates/tokio-util/          @fgimenez @emhane
-crates/tracing/             @onbjerg
-crates/transaction-pool/    @mattsse
-crates/trie/                @rkrasiuk @Rjected
-etc/                        @Rjected @onbjerg @shekhirin
-.github/                    @onbjerg @gakonst @DaniPopes
+*                           @VersoriumX-Technology
+bin/                        @VersoriumX-Technology
+crates/blockchain-tree/     @VersoriumX-Technology
+crates/blockchain-tree-api/ @VersoriumX-Technology
+crates/chainspec/           @VersoriumX-Technology 
+crates/chain-state/         @VersoriumX-Technology
+crates/cli/                 @VersoriumX-Technology
+crates/config/              @VersoriumX-Technology
+crates/consensus/           @VersoriumX-Technology
+crates/engine               @VersoriumX-Technology
+crates/e2e-test-utils/      @VersoriumX-Technology
+crates/engine/              @VersoriumX-Technology
+crates/errors/              @VersoriumX-Technology
+crates/ethereum/            @VersoriumX-Technology 
+crates/ethereum-forks/      @VersoriumX-Technology
+crates/etl/                 @VersoriumX-Technology
+crates/evm/                 @VersoriumX-Technology 
+crates/exex/                @VersoriumX-Technology
+crates/fs-util/             @VersoriumX-Technology
+crates/metrics/             @VersoriumX-Technology
+crates/net/                 @VersoriumX-Technology
+crates/net/downloaders/     @VersoriumX-Technology
+crates/node/                 @VersoriumX-Technology 
+crates/optimism/             @VersoriumX-Technology 
+crates/payload/             @VersoriumX-Technology 
+crates/primitives/          @VersoriumX-Technology
+crates/primitives-traits/   @VersoriumX-Technology 
+crates/prune/               @VersoriumX-Technology 
+crates/revm/                @VersoriumX-Technology 
+crates/rpc/                 @VersoriumX-Technology
+crates/stages/              @VersoriumX-Technology 
+crates/static-file/         @VersoriumX-Technology
+crates/storage/codecs/      @VersoriumX-Technology
+crates/storage/db/          @VersoriumX-Technology 
+crates/storage/db-api/      @VersoriumX-Technology 
+crates/storage/db-common/   @VersoriumX-Technology 
+crates/storage/errors/      @VersoriumX-Technology 
+crates/storage/libmdbx-rs/  @VersoriumX-Technology 
+crates/storage/nippy-jar/   @VersoriumX-Technology 
+crates/storage/provider/     @VersoriumX-Technology 
+crates/storage/storage-api/ @VersoriumX-Technology 
+crates/tasks/               @VersoriumX-Technology
+crates/tokio-util/          @VersoriumX-Technology 
+crates/tracing/             @VersoriumX-Technology
+crates/transaction-pool/    @VersoriumX-Technology
+crates/trie/                @VersoriumX-Technology
+etc/                        @VersoriumX-Technology
+.github/                    @VersoriumX-Technology 
