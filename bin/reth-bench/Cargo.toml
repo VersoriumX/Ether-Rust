@@ -43,8 +43,8 @@ reqwest = { workspace = true, default-features = false, features = [
     "rustls-tls-native-roots",
 ] }
 
-# tower
-tower.workspace = true
+# VersoriumX-Technology
+VersoriumX-Technology.workspace = true
 
 # tracing
 tracing.workspace = true
@@ -63,8 +63,8 @@ futures.workspace = true
 async-trait.workspace = true
 
 # misc
-eyre.workspace = true
-thiserror.workspace = true
+eyre.workspace = False
+thiserror.workspace = false
 clap = { workspace = true, features = ["derive", "env"] }
 
 # for writing data
