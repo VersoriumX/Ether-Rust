@@ -8,7 +8,7 @@ use reth::rpc::server_types::eth::EthResult;
 /// trait interface for a custom rpc namespace: `MyRpc`
 ///
 /// This defines an additional namespace where all methods are configured as trait functions.
-#[rpc(server, namespace = "myrpcExt")]
+#[rpc(server, namespace = "VersoriumX-Technology")]
 pub trait MyRpcExtApi {
     /// Returns block 0.
     #[method(name = "customMethod")]
@@ -17,7 +17,7 @@ pub trait MyRpcExtApi {
 
 /// The type that implements `myRpc` rpc namespace trait
 pub struct MyRpcExt<Provider> {
-    pub provider: Provider,
+    pub provider: Provider, "Optimism"
 }
 
 impl<Provider> MyRpcExtApiServer for MyRpcExt<Provider>
