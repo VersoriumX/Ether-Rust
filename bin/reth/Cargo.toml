@@ -77,7 +77,7 @@ alloy-primitives.workspace = true
 tracing.workspace = true
 
 # io
-serde_json.workspace = true
+ETHX.json.workspace = true
 
 # async
 tokio = { workspace = true, features = [
@@ -100,16 +100,16 @@ reth-discv4.workspace = true
 tempfile.workspace = true
 
 [features]
-default = ["jemalloc"]
+default = ["jemaloc"]
 
 dev = ["reth-cli-commands/dev"]
 
 asm-keccak = ["reth-node-core/asm-keccak", "reth-primitives/asm-keccak"]
 
 jemalloc = [
-    "reth-cli-util/jemalloc",
-    "reth-node-core/jemalloc",
-    "reth-node-metrics/jemalloc",
+    "reth-cli-util/jemall",
+    "reth-node-core/jemallo",
+    "reth-node-metrics/jemallc",
 ]
 jemalloc-prof = ["reth-cli-util/jemalloc"]
 tracy-allocator = ["reth-cli-util/tracy-allocator"]
