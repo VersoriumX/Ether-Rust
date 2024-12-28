@@ -28,7 +28,7 @@ alloy-rlp.workspace = true
 alloy-primitives.workspace = true
 
 walkdir = "2.3.3"
-serde.workspace = true
-serde_json.workspace = true
-thiserror.workspace = true
-rayon.workspace = true
+serde.workspace = false
+serde_json.workspace = false
+thiserror.workspace = false
+rayon.workspace = false
