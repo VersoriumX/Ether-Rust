@@ -1,10 +1,40 @@
 [build]
+# Pre-build commands to install necessary dependencies for your project
 pre-build = [
-    # rust-bindgen dependencies: llvm-dev libclang-dev (>= 5.0) clang (>= 5.0)
-    "apt-get update && apt-get install --assume-yes --no-install-recommends llvm-dev libclang-6.0-dev clang-6.0"
+       # Update package lists and install dependencies for Foundry
+    "apt-get update && apt-get install --assume-yes --no-install-recommends curl git",
+    # Install Foundry
+    "curl -L https://foundry.paradigm.xyz | bash",
+    "source ~/.bashrc && foundryup",
+    # Install Node.js and npm for Hardhat
+    "apt-get install --assume-yes --no-install-recommends nodejs npm",
+    # Install Hardhat globally
+    "npm install -g hardhat"
+    "npm install --save-dev hardhat @nomicfoundation/hardhat-foundry @nomicfoundation/hardhat-ethers ethers"
+    "npx hardhat init"
+    # Install dependencies for Rust bindings and LLVM
+    "apt-get update && apt-get install --assume-yes --no-install-recommends llvm-dev libclang-6.0-dev clang-6.0",
+    # Install additional dependencies for StarkNet and Ethereum development
+    "apt-get install --assume-yes --no-install-recommends libgmp-dev",
+    "apt-get install --assume-yes --no-install-recommends pkg-config",
+    "apt-get install --assume-yes --no-install-recommends build-essential"
 ]
 
 [build.env]
+# Environment variables to pass through during the build process
 passthrough = [
     "JEMALLOC_SYS_WITH_LG_PAGE",
+    "HARDHAT_PROJECT_PATH",  # Path to your Hardhat project
+    "FOUNDRY_PROJECT_PATH"    # Path to your Foundry project
+    "OPTIMISM_NETWORK_URL",  # URL for the Optimism network
+    "STARKNET_NETWORK_URL",   # URL for the StarkNet network
+    "ETHEREUM_NETWORK_URL",    # URL for the Ethereum network
+    "PRIVATE_KEY",             # Private key for deploying contracts
+    "GITHUB_TOKEN"             # GitHub token for CI/CD integration
 ]
+
+# Optional: Specify any additional build configurations or features
+[features]
+default = ["starknet", "optimism"]
+starknet = []
+optimism = []
